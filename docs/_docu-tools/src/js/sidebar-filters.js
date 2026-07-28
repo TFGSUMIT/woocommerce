@@ -1,19 +1,25 @@
-const HIDDEN_DOC_IDS = [
-	'apis', // doc id or slug, relative to docs root
-	'cli',
-	'extensions',
-	'woo-marketplace',
-];
+// @ts-check
 
-export function filterSidebarItems( items ) {
-	return items.filter( ( item ) => {
-		// Hide by doc id
-		if (
-			item.type === 'category' &&
-			HIDDEN_DOC_IDS.includes( item.customProps?.id )
-		) {
-			return false;
-		}
-		return true;
-	} );
-}
+import { useCopyToClipboard } from 'clipboard.js';
+
+const useClipboard = () => {
+  const [copied, setCopied] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const copyToClipboard = useCopyToClipboard();
+
+  const handleCopy = async (text: string) => {
+    try {
+      await copyToClipboard(text);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  return { handleCopy, copied, error };
+};
+
+export default useClipboard;
